@@ -13,12 +13,14 @@
   "dependencies": {
     "@nuxt/ui": "^2.18.7",
     "nuxt": "^3.13.2",
+    "punycode": "^2.3.1",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.2.0",
     "@nuxtjs/supabase": "^1.4.1",
+    "date-fns": "^4.1.0",
     "zod": "^3.23.8"
   }
 }
