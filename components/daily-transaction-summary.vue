@@ -8,21 +8,38 @@
         </div>
     </div>
 </template>
-<script setup>
+<script setup lang="ts">
+import type { Transaction } from '~/types/interface/transactions';
+// Tipando a propriedade 'transactions' como um array de 'Transaction'
 const props = defineProps({
-    date: String,
-    transactions: Array
+  date: String,
+  transactions: {
+    type: Array as () => Transaction[],  // Definindo o tipo adequado para 'transactions'
+    required: true
+  }
 });
+
+// Computed para somar os valores das transações
 const sum = computed(() => {
-    let sum = 0;
-    for (const transaction of props.transactions) {
-        if (transaction.type === 'Income') {
-            sum += transaction.amount
-        } else {
-            sum -= transaction.amount
-        }
+  let total = 0;
+  for (const transaction of props.transactions) {
+    if (transaction.type === 'Income') {
+      total += transaction.amount;
+    } else if (transaction.type === 'Expense') {
+      total -= transaction.amount;
     }
-    return sum;
-})
-const {currency} = useCurrency(sum);
+  }
+  return total;
+});
+
+// Supondo que 'useCurrency' formate o valor de acordo com a moeda
+const useCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',  // Ajuste o código da moeda conforme necessário
+  }).format(amount);
+};
+
+// Computed para formatar o valor total em moeda
+const currency = computed(() => useCurrency(sum.value));
 </script>

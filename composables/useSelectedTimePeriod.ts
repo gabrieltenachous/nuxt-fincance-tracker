@@ -1,6 +1,7 @@
 import { startOfYear, endOfYear, sub, startOfDay, endOfDay, startOfMonth, endOfMonth } from 'date-fns'
+import type { PeriodTime } from '~/types/interface/period'
 
-export const useSelectedTimePeriod = (period) => {
+export const useSelectedTimePeriod = (period: PeriodTime) => {
   const current = computed(
     () => {
       switch (period.value) {

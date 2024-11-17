@@ -27,36 +27,37 @@
   </UCard>
 </template>
 
-<script setup>
-const success = ref(false)
-const email = ref('')
-const pending = ref(false)
-const { toastError } = useAppToast()
-const supabase = useSupabaseClient()
-
-useRedirectIfAuthenticated()
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useAppToast } from '~/composables/useAppToast'; 
+const redirectUrl = useRuntimeConfig().public.baseUrl
+const success = ref(false);
+const email = ref('');
+const pending = ref(false);
+const { toastError } = useAppToast();
+const supabase = useSupabaseClient();
 
 const handleLogin = async () => {
-  pending.value = true
+  pending.value = true;
 
   try {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: 'http://localhost:3000/confirm'
-      }
-    })
+        emailRedirectTo: `${redirectUrl}/confirm`,
+      },
+    });
 
     if (error) {
       toastError({
         title: 'Error authenticating',
-        description: error.message
-      })
+        description: error.message,
+      });
     } else {
-      success.value = true
+      success.value = true;
     }
   } finally {
-    pending.value = false
+    pending.value = false;
   }
-}
+};
 </script>

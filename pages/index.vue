@@ -40,11 +40,13 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { transactionViewOptions } from '~/constants'
 
 const user = useSupabaseUser()
-const selectedView = ref(user.value.user_metadata?.transaction_view ?? transactionViewOptions[1])
+// Verifica se user.value não é null antes de acessar suas propriedades
+const selectedView = ref(user.value?.user_metadata?.transaction_view ?? transactionViewOptions[1])
+
 const isOpen = ref(false)
 const { current, previous } = useSelectedTimePeriod(selectedView)
 

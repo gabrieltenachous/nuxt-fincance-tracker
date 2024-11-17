@@ -6,7 +6,8 @@
         Wait a moment while we sign you in...
     </UCard>
 </template>
- 
-<script setup>
-    useRedirectIfAuthenticated();
+
+<script setup lang="ts">
+// Usando o composable para redirecionar se já estiver autenticado
+useRedirectIfAuthenticated();
 </script>

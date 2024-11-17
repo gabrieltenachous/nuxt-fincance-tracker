@@ -23,59 +23,77 @@
   </div>
 </template>
 
-<script setup>
-const props = defineProps({
-  transaction: Object
-})
-const emit = defineEmits(['deleted', 'edited'])
-const isIncome = computed(() => props.transaction.type === 'Income')
-const icon = computed(
-  () => isIncome.value ? 'i-heroicons-arrow-up-right' : 'i-heroicons-arrow-down-left'
-)
-const iconColor = computed(
-  () => isIncome.value ? 'text-green-600' : 'text-red-600'
-)
+<script setup lang="ts">
+import type { PostgrestError } from '@supabase/supabase-js';
+import { computed, ref } from 'vue';
+import { useCurrency } from '~/composables/useCurrency'; 
+import { type Transaction } from '~/types/interface/transactions';
 
-const { currency } = useCurrency(props.transaction.amount)
+const props = defineProps<{
+  transaction: Transaction;
+}>();
 
-const isLoading = ref(false)
-const { toastError, toastSuccess } = useAppToast()
-const supabase = useSupabaseClient()
+const emit = defineEmits(['deleted', 'edited']);
 
-const isOpen = ref(false)
+const isIncome = computed(() => props.transaction.type === 'Income');
+const icon = computed(() =>
+  isIncome.value ? 'i-heroicons-arrow-up-right' : 'i-heroicons-arrow-down-left'
+);
+const iconColor = computed(() =>
+  isIncome.value ? 'text-green-600' : 'text-red-600'
+);
+
+const { currency } = useCurrency(props.transaction.amount);
+
+const isLoading = ref(false);
+const { toastError, toastSuccess } = useAppToast();
+const supabase = useSupabaseClient();
+
+const isOpen = ref(false);
 
 const deleteTransaction = async () => {
-  isLoading.value = true
+  if (!props.transaction.id) {
+    toastError({ title: 'Transaction ID is missing' });
+    return;
+  }
+
+  isLoading.value = true;
 
   try {
-    await supabase.from('transactions')
+    const { error } = await supabase
+      .from('transactions')
       .delete()
-      .eq('id', props.transaction.id)
-    toastSuccess({
-      title: 'Transaction deleted'
-    })
-    emit('deleted', props.transaction.id)
-  } catch (error) {
-    toastError({
-      title: 'Transaction was not deleted'
-    })
+      .eq('id', props.transaction.id);
+
+    if (error) {
+      throw error;
+    }
+
+    toastSuccess({ title: 'Transaction deleted' });
+    emit('deleted', props.transaction.id);
+  } catch (error: any) {
+    toastError({ 
+      title: 'Transaction was not deleted', 
+      description: error.message 
+    });
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
+
 
 const items = [
   [
     {
       label: 'Edit',
       icon: 'i-heroicons-pencil-square-20-solid',
-      click: () => isOpen.value = true
+      click: () => (isOpen.value = true),
     },
     {
       label: 'Delete',
       icon: 'i-heroicons-trash-20-solid',
-      click: deleteTransaction
-    }
-  ]
-]
+      click: deleteTransaction,
+    },
+  ],
+];
 </script>

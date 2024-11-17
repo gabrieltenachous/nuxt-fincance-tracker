@@ -19,41 +19,45 @@
   </div>
 </template>
 
-<script setup>
-const props = defineProps({
-  title: String,
-  amount: Number,
-  lastAmount: Number,
-  color: String,
-  loading: Boolean
-}) 
-const { amount } = toRefs(props)
-const trendingUp = computed(
-  () => props.amount >= props.lastAmount
-)
-const icon = computed(
-  () => trendingUp.value ? 'i-heroicons-arrow-trending-up' : 'i-heroicons-arrow-trending-down'
-)
-const {currency} = useCurrency(amount)
+<script setup lang="ts">
+import { computed, toRefs } from 'vue';
+import { useCurrency } from '~/composables/useCurrency';
+
+const props = defineProps<{
+  title: string;
+  amount: number;
+  lastAmount: number;
+  color: string;
+  loading: boolean;
+}>();
+
+const { amount } = toRefs(props);
+
+const trendingUp = computed(() => props.amount >= props.lastAmount);
+
+const icon = computed(() =>
+  trendingUp.value ? 'i-heroicons-arrow-trending-up' : 'i-heroicons-arrow-trending-down'
+);
+
+const { currency } = useCurrency(amount);
+
 const percentageTrend = computed(() => {
-  if (props.amount === 0 || props.lastAmount === 0) return '∞%'
+  if (props.amount === 0 || props.lastAmount === 0) return '∞%';
 
-  const bigger = Math.max(props.amount, props.lastAmount)
-  const lower = Math.min(props.amount, props.lastAmount)
+  const bigger = Math.max(props.amount, props.lastAmount);
+  const lower = Math.min(props.amount, props.lastAmount);
 
-  const ratio = ((bigger - lower) / lower) * 100
+  const ratio = ((bigger - lower) / lower) * 100;
 
-  // console.log(bigger, lower, ratio, Math.ceil(ratio))
-
-  return `${Math.ceil(ratio)}%`
-})
+  return `${Math.ceil(ratio)}%`;
+});
 </script>
 
 <style scoped>
 .green {
-  @apply text-green-600 dark:text-green-400
+  @apply text-green-600 dark:text-green-400;
 }
 .red {
-  @apply text-red-600 dark:text-red-400
+  @apply text-red-600 dark:text-red-400;
 }
 </style>

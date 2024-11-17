@@ -6,8 +6,10 @@
         </div>
     </div>
 </template>
-<script setup>
-const links = [
+<script setup lang="ts">
+import type { Links } from '~/types/interface/links'; // Importa a interface externa
+// Tipando a variável 'links' com a interface 'Links'
+const links: Links[] = [
     {
         label: 'Profile',
         to: '/settings/profile'
