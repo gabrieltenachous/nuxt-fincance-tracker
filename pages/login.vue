@@ -30,7 +30,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAppToast } from '~/composables/useAppToast'; 
-const redirectUrl = useRuntimeConfig().public.baseUrl
 const success = ref(false);
 const email = ref('');
 const pending = ref(false);
@@ -44,7 +43,7 @@ const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: `${redirectUrl}/confirm`,
+        emailRedirectTo: `https://nuxt-fincance-tracker.vercel.app/confirm`,
       },
     });
 
